@@ -41,5 +41,47 @@
       ],
       "verdict": "Bill and Richard are highly compatible partners who share a foundational drive for global progress and philanthropy. Their lifestyle alignment as frequent travelers is a strong asset, though they will need to balance Bill's tech-centric, intellectual focus with Richard's adventurous, outdoor-oriented spirit."
     }
+  },
+  {
+    "person_a": "Tony Robbins",
+    "person_b": "Mel Robbins",
+    "result": {
+      "conversation": [
+        {
+          "speaker": "Agent A",
+          "message": "Hello! My user Tony Robbins is heavily focused on personal empowerment, leadership, technology, space exploration, government innovation, and writing, driven by a vision for a meaningful life and execution."
+        },
+        {
+          "speaker": "Agent B",
+          "message": "That aligns in many ways with my user Mel Robbins, who is deeply interested in personal growth, self-improvement, psychology, mental health, trauma healing, relationships, and podcasting."
+        },
+        {
+          "speaker": "Agent A",
+          "message": "We both share an ambition for personal development and writing as authors, and both of our users operate as public figures and influential speakers. However, Tony focuses more on large-scale events, technology, and government innovation, whereas Mel focuses on podcasting and psychological healing."
+        },
+        {
+          "speaker": "Agent B",
+          "message": "True, and while neither profile lists specific hobbies or needs, they both value inspiration, growth, and making a broad impact through their work as content creators and entrepreneurs."
+        }
+      ],
+      "compatibility_score": 85,
+      "compatibility_breakdown": {
+        "interests": 80,
+        "values": 90,
+        "lifestyle": 85,
+        "personality": 90,
+        "needs": 75
+      },
+      "strengths": [
+        "Shared dedication to personal growth and self-improvement",
+        "Both are authors and public figures with influential personalities",
+        "Aligned values around inspiration, growth, and meaningful life impact"
+      ],
+      "differences": [
+        "Tony focuses on technology, space exploration, government innovation, and large-scale events",
+        "Mel focuses on podcasting, psychology, mental health, and trauma healing"
+      ],
+      "verdict": "High compatibility due to overlapping professional lifestyles, shared drive for personal development, and mutual status as influential public figures and authors."
+    }
   }
 ]

@@ -64,8 +64,9 @@ gemini_client = genai.Client(
 # FILES
 # =========================================================
 
-DATA_FILE = "data/profiles.json"
-DATES_FILE = "data/dates.json"
+DATA_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "data")
+DATA_FILE = os.path.join(DATA_DIR, "profiles.json")
+DATES_FILE = os.path.join(DATA_DIR, "dates.json")
 
 
 # =========================================================
@@ -75,7 +76,7 @@ DATES_FILE = "data/dates.json"
 def save_profiles():
 
     os.makedirs(
-        "data",
+        DATA_DIR,
         exist_ok=True
     )
 
@@ -112,6 +113,14 @@ def load_profiles():
         return []
 
 
+def get_profile_name(profile, default="Unknown"):
+    person = profile.get("person", {})
+    linkedin_name = (person.get("linkedin", {}).get("name") or "").strip()
+    instagram_name = (person.get("instagram", {}).get("full_name") or "").strip()
+    username = (person.get("instagram", {}).get("username") or "").strip()
+    return linkedin_name or instagram_name or username or default
+
+
 # =========================================================
 # SAVE / LOAD DATES
 # =========================================================
@@ -119,7 +128,7 @@ def load_profiles():
 def save_dates():
 
     os.makedirs(
-        "data",
+        DATA_DIR,
         exist_ok=True
     )
 
@@ -161,6 +170,10 @@ def load_dates():
 # =========================================================
 
 if "profiles" not in st.session_state:
+    st.session_state["profiles"] = load_profiles()
+elif not st.session_state["profiles"]:
+    # Pick up saved profiles if this session started before the data file
+    # was populated or was launched with a different working directory.
     st.session_state["profiles"] = load_profiles()
 
 if "dates" not in st.session_state:
@@ -793,16 +806,7 @@ def build_rankings(profiles):
         profiles
     ):
 
-        name_a = (
-            profile_a[
-                "person"
-            ][
-                "linkedin"
-            ].get(
-                "name",
-                f"Person {i + 1}"
-            )
-        )
+        name_a = get_profile_name(profile_a, f"Person {i + 1}")
 
         matches = []
 
@@ -813,18 +817,7 @@ def build_rankings(profiles):
             if i == j:
                 continue
 
-
-            name_b = (
-                profile_b[
-                    "person"
-                ][
-                    "linkedin"
-                ].get(
-                    "name",
-                    f"Person {j + 1}"
-                )
-            )
-
+            name_b = get_profile_name(profile_b, f"Person {j + 1}")
 
             match = (
                 calculate_match_score(
@@ -832,7 +825,6 @@ def build_rankings(profiles):
                     profile_b
                 )
             )
-
 
             matches.append({
                 "name":
@@ -845,18 +837,15 @@ def build_rankings(profiles):
                     match
             })
 
-
         matches.sort(
             key=lambda x:
                 x["score"],
             reverse=True
         )
 
-
         rankings[
             name_a
         ] = matches
-
 
     return rankings
 
@@ -1113,20 +1102,8 @@ if not st.session_state[
 else:
 
     profile_names = [
-
-        profile[
-            "person"
-        ][
-            "linkedin"
-        ].get(
-            "name",
-            "Unknown"
-        )
-
-        for profile
-        in st.session_state[
-            "profiles"
-        ]
+        get_profile_name(profile)
+        for profile in st.session_state["profiles"]
     ]
 
 
@@ -1332,35 +1309,37 @@ if st.session_state[
         start=1
     ):
 
-        name = (
-            profile[
-                "person"
-            ][
-                "linkedin"
-            ].get(
-                "name",
-                "Unknown"
-            )
-        )
+        linkedin_name = (
+            profile.get("person", {})
+            .get("linkedin", {})
+            .get("name", "")
+            or ""
+        ).strip()
 
+        instagram_name = (
+            profile.get("person", {})
+            .get("instagram", {})
+            .get("full_name", "")
+            or ""
+        ).strip()
 
         username = (
-            profile[
-                "person"
-            ][
-                "instagram"
-            ].get(
-                "username",
-                ""
+            profile.get("person", {})
+            .get("instagram", {})
+            .get("username", "")
+            or ""
+        ).strip()
+
+        name = linkedin_name or instagram_name or username or "Unknown"
+
+        if username:
+            st.write(
+                f"{index}. {name} — @{username}"
             )
-        )
-
-
-        st.write(
-            f"{index}. "
-            f"{name} — "
-            f"@{username}"
-        )
+        else:
+            st.write(
+                f"{index}. {name}"
+            )
 
 
 # =========================================================
@@ -1386,20 +1365,29 @@ if len(
 
 
     names = [
-
-        profile[
-            "person"
-        ][
-            "linkedin"
-        ].get(
-            "name",
-            "Unknown"
+        (
+            (profile.get("person", {})
+             .get("linkedin", {})
+             .get("name", "")
+             or "")
+            .strip()
+            or (
+                (profile.get("person", {})
+                 .get("instagram", {})
+                 .get("full_name", "")
+                 or "")
+                .strip()
+            )
+            or (
+                (profile.get("person", {})
+                 .get("instagram", {})
+                 .get("username", "")
+                 or "")
+                .strip()
+            )
+            or "Unknown"
         )
-
-        for profile
-        in st.session_state[
-            "profiles"
-        ]
+        for profile in st.session_state["profiles"]
     ]
 
 
